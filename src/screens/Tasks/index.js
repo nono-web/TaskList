@@ -5,12 +5,18 @@ import TaskTile from './TaskTile';
 import TaskForm from './TaskForm';
 import FloatingBtn from '../../components/FloatingBtn';
 import Counter from '../../components/Counter';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteTask, getTasks, toggleTask } from '../../redux/store';
 
 
 const TaskScreen = () => {
-  const [tasks, setTasks] = useState([]);
+
   const [isFormVisible, setIsFormVisible] = useState(false);
-  console.log(tasks)
+
+
+  const tasks = useSelector(getTasks)
+  console.log("Couou",tasks)
+const dispatch = useDispatch()
 
   const renderItem = ({ item }) => {
     return (
@@ -18,44 +24,12 @@ const TaskScreen = () => {
     );
   };
 
-  const onAddTask = (title) => {
-    setTasks([
-      ...tasks,
-      {
-        id: Date.now(),
-        title,
-        isCompleted: false,
-      },
-    ]);
-  };
-
   const onDelete = (id) => {
-    let newTask = [];
-
-    tasks.forEach((t) => {
-      if (t.id !== id) {
-        newTask.push(t);
-        return;
-      }
-    });
-    setTasks(newTask);
+   dispatch(deleteTask(id))
   };
 
   const onUpdateTask = (id) => {
-    let newTask = [];
-
-    tasks.forEach((t) => {
-      if (t.id !== id) {
-        newTask.push(t);
-        return;
-      }
-      newTask.push({
-        id,
-        title: t.title,
-        isCompleted: !t.isCompleted,
-      });
-    });
-    setTasks(newTask);
+   dispatch(toggleTask(id))
   };
 
   const onPressBtn = () => {
@@ -67,7 +41,7 @@ const TaskScreen = () => {
         ListHeaderComponent={
           <>
             <Header />
-            {isFormVisible && <TaskForm onAddTask={onAddTask} />}
+            {isFormVisible && <TaskForm />}
             <View style={styles.containerCounter}>
             <Counter nb={tasks.length}  title="Tâches créées" />
             <Counter nb={tasks.filter(t=>t.isCompleted === true).length}  title="Tâches effectuées" />
